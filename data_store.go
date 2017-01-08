@@ -1,4 +1,4 @@
-package stoneshop
+package main
 
 type ItemStatus int
 
