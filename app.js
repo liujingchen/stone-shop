@@ -79,7 +79,6 @@ app.post('/item_create', function(req, res) {
             res.status(500).send(FAILED_TO_CONNECT);
             return;
         }
-        console.log(req.body);
         let col = db.collection(COL_ITEM);
         col.insertOne(req.body, function(err, r) {
             if (err != null || r.insertedCount != 1) {
@@ -153,5 +152,5 @@ app.post('/item_delete', function(req, res) {
 });
 
 app.listen(8080, function() {
-    console.log('Example app listening on port 8080!');
+    console.log('Wep app listening on port 8080!');
 });
