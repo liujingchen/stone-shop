@@ -7,8 +7,8 @@ html
     script(src='/static/js/jquery-3.1.1.min.js')
     script(src='/static/js/bootstrap.min.js')
   body
-    include navbar.pug
     .container
+      include navbar.pug
       form(action='/item_create', method='post')
         .form-group
           label= 'Create New Item'
