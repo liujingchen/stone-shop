@@ -6,8 +6,12 @@ html
     link(rel='stylesheet', href='/static/css/bootstrap-theme.min.css')
     script(src='/static/js/jquery-3.1.1.min.js')
     script(src='/static/js/bootstrap.min.js')
+    script(src='/static/js/url.min.js')
+    script(src='/static/js/navbar.js')
   body
     .container
+      include navbar.pug
+      br
       a.btn.btn-primary(href='/create')= 'Create'
       br
       br

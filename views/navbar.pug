@@ -1,0 +1,5 @@
+ul.nav.nav-pills
+  each text, step in {1: 'To Photo', 2: 'To Measure', 3: 'To Put Online', 4: 'To Sell', 5: 'To Send'}
+    - let navUrl = '/?step=' + step;
+    li(step=step, role='presentation')
+      a.step(href=navUrl)= text

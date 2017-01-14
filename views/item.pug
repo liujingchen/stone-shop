@@ -7,6 +7,7 @@ html
     script(src='/static/js/jquery-3.1.1.min.js')
     script(src='/static/js/bootstrap.min.js')
   body
+    include navbar.pug
     .container
       form(action='/item_update', method='post')
         .form-group
@@ -17,7 +18,7 @@ html
           input.form-control(type='text', name='summary', value=item.summary)
         .form-group
           label= 'Size'
-          input.form-control(type='number', name='size', value=item.size)
+          input.form-control(type='text', name='size', value=item.size)
         .form-group
           label= 'Yahoo ID'
           input.form-control(type='text', name='yahooId', value=item.yahooId)

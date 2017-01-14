@@ -12,13 +12,19 @@ app.use(bodyParser.urlencoded({'extended': false}));
 app.set('view engine', 'pug');
 
 app.get('/', function(req, res) {
+    let step = '1';
+    if ('step' in req.query) {
+        step = req.query.step;
+    }
+
     MongoClient.connect(MONGO_URL, function(err, db) {
         if(err != null) {
             res.status(500).send(FAILED_TO_CONNECT);
             return;
         }
         let col = db.collection(COL_ITEM);
-        col.find({}).toArray(function(err, docs) {
+        let queryObj = buildQueryFromStep(step);
+        col.find(queryObj).toArray(function(err, docs) {
             if (err != null) {
                 res.status(500).send('Failed to get items from DB.');
             } else {
@@ -28,6 +34,41 @@ app.get('/', function(req, res) {
         });
     });
 });
+
+function buildQueryFromStep(step) {
+    switch(step) {
+        case '1': return notExistQuery('photo');
+        case '2': return notExistQuery('size');
+        case '3': return {'$and': [
+            existQuery('size'),
+            // existQuery('photo'),
+            notExistQuery('yahooId'),
+        ]};
+        case '4': return {'$and': [
+            existQuery('yahooId'),
+            notExistQuery('buyerName'),
+        ]};
+        case '5': return existQuery('buyerName');
+    }
+    return {};
+}
+
+function existQuery(field) {
+    let obj = {'$and': [{}, {}, {}]};
+    obj.$and[0][field] = {'$exists': true};
+    obj.$and[1][field] = {'$ne': ''};
+    obj.$and[2][field] = {'$ne': []};
+    return obj;
+}
+
+function notExistQuery(field) {
+    let obj = {'$or': [{}, {}, {}]};
+    obj.$or[0][field] = {'$exists': false};
+    obj.$or[1][field] = {'$eq': ''};
+    obj.$or[2][field] = {'$eq': []};
+    return obj;
+}
+
 app.get('/create', function(req, res) {
     res.render('create');
 });
