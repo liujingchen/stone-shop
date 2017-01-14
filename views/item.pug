@@ -1,0 +1,37 @@
+doctype html
+html
+  head
+    title= 'store shop'
+    link(rel='stylesheet', href='/static/css/bootstrap.min.css')
+    link(rel='stylesheet', href='/static/css/bootstrap-theme.min.css')
+    script(src='/static/js/jquery-3.1.1.min.js')
+    script(src='/static/js/bootstrap.min.js')
+  body
+    .container
+      form(action='/item_update', method='post')
+        .form-group
+          label= 'ID'
+          input.form-control(type='text', name='_id', value=item._id, readonly)
+        .form-group
+          label= 'Summary'
+          input.form-control(type='text', name='summary', value=item.summary)
+        .form-group
+          label= 'Size'
+          input.form-control(type='number', name='size', value=item.size)
+        .form-group
+          label= 'Yahoo ID'
+          input.form-control(type='text', name='yahooId', value=item.yahooId)
+        .form-group
+          label= 'Buyer Name'
+          input.form-control(type='text', name='buyerName', value=item.buyerName)
+        .form-group
+          label= 'Buyer Post Code'
+          input.form-control(type='text', name='buyerPostCode', value=item.buyerPostCode)
+        .form-group
+          label= 'Buyer Address'
+          textarea.form-control(name='buyerAddress')= item.buyerAddress
+        button.btn.btn-primary(type='submit')= 'Update'
+      .pull-right
+        form(action='/item_delete', method='post')
+          input(type='hidden', name='_id', value=item._id)
+          button.btn.btn-danger(type='submit')= 'Delete'

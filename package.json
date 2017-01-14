@@ -1,0 +1,25 @@
+{
+  "name": "stone-shop",
+  "version": "1.0.0",
+  "description": "Webapp for sharing info",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liujingchen/stone-shop.git"
+  },
+  "author": "Jingchen Liu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/liujingchen/stone-shop/issues"
+  },
+  "homepage": "https://github.com/liujingchen/stone-shop#readme",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "mongodb": "^2.2.21",
+    "pug": "^2.0.0-beta6"
+  }
+}

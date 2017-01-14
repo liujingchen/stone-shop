@@ -4,3 +4,4 @@ stone-shop
 .eslintrc.*
 .pug-lintrc
 .tern-project
+node_modules

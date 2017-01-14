@@ -1,0 +1,41 @@
+doctype html
+html
+  head
+    title= 'store shop'
+    link(rel='stylesheet', href='/static/css/bootstrap.min.css')
+    link(rel='stylesheet', href='/static/css/bootstrap-theme.min.css')
+    script(src='/static/js/jquery-3.1.1.min.js')
+    script(src='/static/js/bootstrap.min.js')
+  body
+    .container
+      a.btn.btn-primary(href='/create')= 'Create'
+      br
+      br
+      table.table.table-striped.table-bordered
+        thead
+          tr
+            td= 'ID'
+            td= 'Summary'
+            td= 'Size'
+            td= 'Yahoo'
+            td= 'Buyer'
+        tbody
+          each item in items
+            - let itemUrl = '/item/' + item._id;
+            tr
+              td
+                a(href=itemUrl)= item._id
+              td
+                a(href=itemUrl)= item.summary
+              td= item.size
+              if item.yahooId
+                - let yahooUrl = 'http://auctions.yahoo.co.jp/jp/auction/' + item.yahooId;
+                td
+                  a(href=yahooUrl)= 'link'
+              else
+                td= ''
+              if item.buyerName
+                - let buyerStr = item.buyerName + ' ' + item.buyerPostCode + ' ' + item.buyerAddress;
+                td= buyerStr
+              else
+                td= ''
