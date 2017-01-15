@@ -16,6 +16,10 @@ const app = express();
 let db;
 app.use('/static', express.static('html/static'));
 app.use(bodyParser.urlencoded({'extended': false}));
+app.use(function(err, req, res, next) {
+  console.error(err.stack);
+  res.status(500).send('Internal Error!');
+});
 app.set('view engine', 'pug');
 
 app.get('/', function(req, res) {
@@ -115,26 +119,56 @@ app.post('/item_update', function(req, res) {
 
 app.post('/item_delete', function(req, res) {
     let col = db.collection(COL_ITEM);
-    col.deleteOne({'_id': new ObjectId(req.body._id)}, function(err, r) {
-        if (err != null || r.deletedCount != 1) {
-            res.status(500).send('Failed to delete item from DB.');
+    let itemId = req.body._id;
+    col.find({'_id': new ObjectId(itemId)}).limit(1).toArray(
+        function(err, docs) {
+            if (err != null || docs.length != 1) {
+                res.status(500).send('Failed to get imgs from item when' +
+                        ' delete.');
+                return;
+            }
+            let imgIds = docs[0].photo;
+            if (imgIds) {
+                for (let imgId of imgIds) {
+                    deleteImg(imgId);
+                }
+            }
+            col.deleteOne({'_id': new ObjectId(req.body._id)},
+                function(err, r) {
+                    if (err != null || r.deletedCount != 1) {
+                        res.status(500).send('Failed to delete item from DB.');
+                    } else {
+                        res.redirect('/');
+                    }
+                }
+            );
+        }
+    );
+});
+
+function deleteImg(imgId) {
+    let bucket = new GridFSBucket(db, {'bucketName': COL_IMG});
+
+    bucket.delete(new ObjectId(imgId), function(err) {
+        if (err != null) {
+            console.error('Failed to delete image ' + imgId);
         } else {
-            res.redirect('/');
+            console.info('Deleted image ' + imgId);
         }
     });
-});
+}
 
 app.post('/img_upload', upload.single('imgFile'), function(req, res) {
     let imgId = new ObjectId();
-    let gridStore = new GridStore(db, imgId, req.file.filename,
-            'w', {'root': COL_IMG});
+    let gridStore = new GridStore(db, imgId, req.file.originalname,
+            'w', {'root': COL_IMG, 'content_type': req.file.mimetype});
     gridStore.writeFile(req.file.path, function(err, doc) {
         if(err != null) {
             res.status(500).send('Failed to save img.');
         } else {
             let col = db.collection(COL_ITEM);
             col.updateOne({'_id': new ObjectId(req.body._id)},
-                {'$push': {'photo': imgId}},
+                {'$push': {'photo': imgId.toString()}},
                 function(err, r) {
                     if (err != null) {
                         res.status(500).send('Failed to add img to item.');
@@ -155,10 +189,43 @@ app.post('/img_upload', upload.single('imgFile'), function(req, res) {
 app.get('/img/:imgId', function(req, res) {
     let imgId = req.params.imgId;
     let bucket = new GridFSBucket(db, {'bucketName': COL_IMG});
-    res.setHeader('content-type', 'image/jpg');
-    bucket.openDownloadStream(new ObjectId(imgId)).pipe(res);
+    bucket.openDownloadStream(new ObjectId(imgId))
+        .on('file', function(file) {
+            res.setHeader('content-type', file.contentType);
+            res.setHeader('Content-Disposition',
+                    'inline; filename="' + file.filename + '"');
+        })
+        .pipe(res);
 });
 
+app.get('/img_download/:imgId', function(req, res) {
+    let imgId = req.params.imgId;
+    let bucket = new GridFSBucket(db, {'bucketName': COL_IMG});
+    bucket.openDownloadStream(new ObjectId(imgId))
+        .on('file', function(file) {
+            res.setHeader('content-type', file.contentType);
+            res.setHeader('Content-Disposition',
+                    'attachment; filename="' + file.filename + '"');
+        })
+        .pipe(res);
+});
+
+app.post('/img_delete/:itemId/:imgId', function(req, res) {
+    let itemId = req.params.itemId;
+    let imgId = req.params.imgId;
+    let col = db.collection(COL_ITEM);
+    col.updateOne({'_id': new ObjectId(itemId)},
+        {'$pull': {'photo': imgId}},
+        function(err, r) {
+            if (err != null) {
+                res.status(500).send('Failed to add img to item.');
+            } else {
+                res.redirect('/item/' + itemId);
+                deleteImg(imgId);
+            }
+        }
+    );
+});
 
 MongoClient.connect(MONGO_URL, function(err, dbResult) {
     if(err != null) {
