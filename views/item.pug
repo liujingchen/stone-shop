@@ -9,6 +9,15 @@ html
   body
     .container
       include navbar.pug
+      each imgId in item.photo
+        - let imgUrl = '/img/' + imgId;
+        img(src=imgUrl, alt=imgId)
+      form(action='/img_upload', method='post', enctype='multipart/form-data')
+        .form-group
+          label= 'Add Photo'
+          input(type='hidden', name='_id', value=item._id)
+          input.form-control(type='file', name='imgFile', accept='image/*;capture=camera')
+          button.btn.btn-primary(type='submit')= 'Upload'
       form(action='/item_update', method='post')
         .form-group
           label= 'ID'
