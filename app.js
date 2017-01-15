@@ -186,28 +186,39 @@ app.post('/img_upload', upload.single('imgFile'), function(req, res) {
     });
 });
 
-app.get('/img/:imgId', function(req, res) {
+function handleImgGet(req, res, disposition) {
     let imgId = req.params.imgId;
-    let bucket = new GridFSBucket(db, {'bucketName': COL_IMG});
-    bucket.openDownloadStream(new ObjectId(imgId))
-        .on('file', function(file) {
-            res.setHeader('content-type', file.contentType);
-            res.setHeader('Content-Disposition',
-                    'inline; filename="' + file.filename + '"');
-        })
-        .pipe(res);
+    let imgIdObj = new ObjectId(imgId);
+    let gridStore = new GridStore(db, imgIdObj, '', 'r', {'root': COL_IMG});
+    gridStore.open(function(err, gridStore) {
+        if (err != null) {
+            res.status(404).send('Image Not Found');
+            return;
+        }
+        gridStore.close(function(err) {
+            if (err != null) {
+                res.status(500).send('Failed to close grid store.');
+                return;
+            }
+
+            let bucket = new GridFSBucket(db, {'bucketName': COL_IMG});
+            bucket.openDownloadStream(imgIdObj)
+                .on('file', function(file) {
+                    res.setHeader('content-type', file.contentType);
+                    res.setHeader('Content-Disposition',
+                            disposition + '; filename="' + file.filename + '"');
+                })
+                .pipe(res);
+        });
+    });
+}
+
+app.get('/img/:imgId', function(req, res) {
+    handleImgGet(req, res, 'inline');
 });
 
 app.get('/img_download/:imgId', function(req, res) {
-    let imgId = req.params.imgId;
-    let bucket = new GridFSBucket(db, {'bucketName': COL_IMG});
-    bucket.openDownloadStream(new ObjectId(imgId))
-        .on('file', function(file) {
-            res.setHeader('content-type', file.contentType);
-            res.setHeader('Content-Disposition',
-                    'attachment; filename="' + file.filename + '"');
-        })
-        .pipe(res);
+    handleImgGet(req, res, 'attatchment');
 });
 
 app.post('/img_delete/:itemId/:imgId', function(req, res) {
