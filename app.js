@@ -1,9 +1,12 @@
 const express = require('express');
 const fs = require('fs');
 const bodyParser = require('body-parser');
+
 const multer = require('multer');
 const upload = multer({storage: multer.diskStorage({'dest': '/tmp/'})});
+
 const mongodb = require('mongodb');
+const users = require('./users.json');
 const MongoClient = mongodb.MongoClient;
 const ObjectId = mongodb.ObjectId;
 const GridStore = mongodb.GridStore;
@@ -12,8 +15,12 @@ const MONGO_URL = 'mongodb://localhost:27017/stoneshop';
 const FAILED_TO_CONNECT = 'Failed to connect to DB.';
 const COL_ITEM = 'items';
 const COL_IMG = 'itemImg';
+
+const passport = require('passport');
+const BasicStrategy = require('passport-http').BasicStrategy;
 const app = express();
 let db;
+
 app.use('/static', express.static('html/static'));
 app.use(bodyParser.urlencoded({'extended': false}));
 app.use(function(err, req, res, next) {
@@ -21,8 +28,22 @@ app.use(function(err, req, res, next) {
   res.status(500).send('Internal Error!');
 });
 app.set('view engine', 'pug');
+passport.use(new BasicStrategy(
+  function(username, password, done) {
+      if (users[username] == password) {
+          done(null, username);
+          return;
+      }
+      done(null, false);
+  }
+));
 
-app.get('/', function(req, res) {
+const mw = {
+    'auth': passport.authenticate('basic', {'session': false}),
+    'upload': upload.single('imgFile'),
+};
+
+app.get('/', mw.auth, function(req, res) {
     let step = '1';
     if ('step' in req.query) {
         step = req.query.step;
@@ -74,11 +95,11 @@ function notExistQuery(field) {
     return obj;
 }
 
-app.get('/create', function(req, res) {
+app.get('/create', mw.auth, function(req, res) {
     res.render('create');
 });
 
-app.post('/item_create', function(req, res) {
+app.post('/item_create', mw.auth, function(req, res) {
     let col = db.collection(COL_ITEM);
     col.insertOne(req.body, function(err, r) {
         if (err != null || r.insertedCount != 1) {
@@ -89,7 +110,7 @@ app.post('/item_create', function(req, res) {
     });
 });
 
-app.get('/item/:itemId', function(req, res) {
+app.get('/item/:itemId', mw.auth, function(req, res) {
     let col = db.collection(COL_ITEM);
     col.find({'_id': new ObjectId(req.params.itemId)}).limit(1).toArray(
         function(err, docs) {
@@ -102,7 +123,7 @@ app.get('/item/:itemId', function(req, res) {
     );
 });
 
-app.post('/item_update', function(req, res) {
+app.post('/item_update', mw.auth, function(req, res) {
     let col = db.collection(COL_ITEM);
     let data = Object.assign({}, req.body);
     delete data._id;
@@ -117,7 +138,7 @@ app.post('/item_update', function(req, res) {
     );
 });
 
-app.post('/item_delete', function(req, res) {
+app.post('/item_delete', mw.auth, function(req, res) {
     let col = db.collection(COL_ITEM);
     let itemId = req.body._id;
     col.find({'_id': new ObjectId(itemId)}).limit(1).toArray(
@@ -158,7 +179,7 @@ function deleteImg(imgId) {
     });
 }
 
-app.post('/img_upload', upload.single('imgFile'), function(req, res) {
+app.post('/img_upload', [mw.auth, mw.upload], function(req, res) {
     let imgId = new ObjectId();
     let gridStore = new GridStore(db, imgId, req.file.originalname,
             'w', {'root': COL_IMG, 'content_type': req.file.mimetype});
@@ -213,15 +234,15 @@ function handleImgGet(req, res, disposition) {
     });
 }
 
-app.get('/img/:imgId', function(req, res) {
+app.get('/img/:imgId', mw.auth, function(req, res) {
     handleImgGet(req, res, 'inline');
 });
 
-app.get('/img_download/:imgId', function(req, res) {
+app.get('/img_download/:imgId', mw.auth, function(req, res) {
     handleImgGet(req, res, 'attatchment');
 });
 
-app.post('/img_delete/:itemId/:imgId', function(req, res) {
+app.post('/img_delete/:itemId/:imgId', mw.auth, function(req, res) {
     let itemId = req.params.itemId;
     let imgId = req.params.imgId;
     let col = db.collection(COL_ITEM);

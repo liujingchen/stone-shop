@@ -5,3 +5,4 @@ stone-shop
 .pug-lintrc
 .tern-project
 node_modules
+users.json
