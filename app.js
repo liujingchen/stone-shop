@@ -234,7 +234,8 @@ function handleImgGet(req, res, disposition, summary) {
                     res.setHeader('content-type', file.contentType);
                     let filename = (summary? summary + '_':'') + file.filename;
                     res.setHeader('Content-Disposition',
-                            disposition + '; filename="' + encodeURI(filename) + '"');
+                            disposition + '; filename="'
+                            + encodeURI(filename) + '"');
                 })
                 .pipe(res);
         });
@@ -269,7 +270,7 @@ app.post('/img_delete/:itemId/:imgId', mw.auth, function(req, res) {
 
 MongoClient.connect(MONGO_URL, function(err, dbResult) {
     if(err != null) {
-        res.status(500).send(FAILED_TO_CONNECT);
+        console.error(FAILED_TO_CONNECT + ": " + err);
         return;
     }
     db = dbResult;
