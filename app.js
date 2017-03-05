@@ -1,6 +1,7 @@
 const express = require('express');
 const fs = require('fs');
 const bodyParser = require('body-parser');
+const sleep = require('sleep');
 
 const multer = require('multer');
 const upload = multer({storage: multer.diskStorage({'dest': '/tmp/'})});
@@ -268,13 +269,20 @@ app.post('/img_delete/:itemId/:imgId', mw.auth, function(req, res) {
     );
 });
 
-MongoClient.connect(MONGO_URL, function(err, dbResult) {
+let mongoRetry = 10;
+function handleMongoConnected(err, dbResult) {
     if(err != null) {
         console.error(FAILED_TO_CONNECT + ": " + err);
+        if (mongoRetry > 0) {
+            mongoRetry--;
+            sleep.sleep(1);
+            MongoClient.connect(MONGO_URL, handleMongoConnected);
+        }
         return;
     }
     db = dbResult;
     app.listen(8080, function() {
         console.log('Wep app listening on port 8080!');
     });
-});
+}
+MongoClient.connect(MONGO_URL, handleMongoConnected);
