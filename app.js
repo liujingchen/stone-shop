@@ -213,7 +213,7 @@ app.post('/img_upload', [mw.auth, mw.upload], function(req, res) {
     });
 });
 
-function handleImgGet(req, res, disposition) {
+function handleImgGet(req, res, disposition, summary) {
     let imgId = req.params.imgId;
     let imgIdObj = new ObjectId(imgId);
     let gridStore = new GridStore(db, imgIdObj, '', 'r', {'root': COL_IMG});
@@ -232,8 +232,9 @@ function handleImgGet(req, res, disposition) {
             bucket.openDownloadStream(imgIdObj)
                 .on('file', function(file) {
                     res.setHeader('content-type', file.contentType);
+                    let filename = (summary? summary + '_':'') + file.filename;
                     res.setHeader('Content-Disposition',
-                            disposition + '; filename="' + file.filename + '"');
+                            disposition + '; filename="' + encodeURI(filename) + '"');
                 })
                 .pipe(res);
         });
@@ -241,11 +242,12 @@ function handleImgGet(req, res, disposition) {
 }
 
 app.get('/img/:imgId', mw.auth, function(req, res) {
-    handleImgGet(req, res, 'inline');
+    handleImgGet(req, res, 'inline', null);
 });
 
 app.get('/img_download/:imgId', mw.auth, function(req, res) {
-    handleImgGet(req, res, 'attatchment');
+    let summary = 'summary' in req.query ? req.query.summary : null;
+    handleImgGet(req, res, 'attatchment', summary);
 });
 
 app.post('/img_delete/:itemId/:imgId', mw.auth, function(req, res) {

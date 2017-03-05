@@ -8,7 +8,7 @@ html
       if item.photo
         each imgId in item.photo
           - let imgUrl = '/img/' + imgId;
-          - let imgDownloadUrl = '/img_download/' + imgId;
+          - let imgDownloadUrl = '/img_download/' + imgId + "?summary=" + encodeURI(item.summary);
           button.btn.btn-success(type='button', data-toggle='modal', data-target='#' + imgId)= 'Pic'
           .modal(id=imgId, tabindex='-1', role='dialog')
             .modal-dialog(role='document')
