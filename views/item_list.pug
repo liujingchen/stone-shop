@@ -22,10 +22,11 @@ html
           tbody
             each item in items
               - let itemUrl = '/item/' + item._id;
+              - let descript = item.photo.length + ", " + item.size + ", " + item.weight + ", " + item.carat;
               tr
                 td
                   a(href=itemUrl)= item.summary
-                td= item.size
+                td= descript
                 if item.yahooId
                   - let yahooUrl = 'http://auctions.yahoo.co.jp/jp/auction/' + item.yahooId;
                   td

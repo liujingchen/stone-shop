@@ -64,9 +64,15 @@ app.get('/', mw.auth, function(req, res) {
 function buildQueryFromStep(step) {
     switch(step) {
         case '1': return notExistQuery('photo');
-        case '2': return notExistQuery('size');
+        case '2': return {'$or': [
+            notExistQuery('size'),
+            notExistQuery('weight'),
+            notExistQuery('carat'),
+        ]};
         case '3': return {'$and': [
             existQuery('size'),
+            existQuery('weight'),
+            existQuery('carat'),
             existQuery('photo'),
             notExistQuery('yahooId'),
         ]};

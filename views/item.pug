@@ -41,6 +41,15 @@ html
           label= 'Size'
           input.form-control(type='text', name='size', value=item.size)
         .form-group
+          label= 'Weight'
+          input.form-control(type='text', name='weight', value=item.weight)
+        .form-group
+          label= 'Carat'
+          input.form-control(type='text', name='carat', value=item.carat)
+        .form-group
+          label= 'Comment'
+          textarea.form-control(name='comment')= item.comment
+        .form-group
           label= 'Yahoo ID'
           input.form-control(type='text', name='yahooId', value=item.yahooId)
         .form-group
