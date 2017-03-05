@@ -8,21 +8,21 @@ html
     .container
       include navbar.pug
       br
-      a.btn.btn-primary(href='/create')= 'Create'
+      a.btn.btn-primary(href='/create')= '新規'
       br
       br
       .table-responsive
         table.table.table-striped.table-bordered
           thead
             tr
-              td= 'Summary'
-              td= 'Size'
+              td= 'タイトル'
+              td= '概要'
               td= 'Yahoo'
-              td= 'Buyer'
+              td= '落札者'
           tbody
             each item in items
               - let itemUrl = '/item/' + item._id;
-              - let descript = item.photo.length + ", " + item.size + ", " + item.weight + ", " + item.carat;
+              - let descript = (item.photo? item.photo.length:0) + ", " + item.size + ", " + item.weight + ", " + item.carat;
               tr
                 td
                   a(href=itemUrl)= item.summary

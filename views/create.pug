@@ -7,6 +7,6 @@ html
       include navbar.pug
       form(action='/item_create', method='post')
         .form-group
-          label= 'Create New Item'
-          input.form-control(type='text', name='summary', placeholder='Summary of the item')
-        button.btn.btn-primary(type='submit')= 'Create'
+          label= '商品新規'
+          input.form-control(type='text', name='summary', placeholder='タイトル')
+        button.btn.btn-primary(type='submit')= '送信'

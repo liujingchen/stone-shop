@@ -14,55 +14,55 @@ html
             .modal-dialog(role='document')
               .modal-content
                 .modal-header
-                  h5.modal-title= Picture
+                  h5.modal-title= '写真'
                 .modal-body
                   img.img-responsive.center-block(src=imgUrl, alt=imgId, style='max-width:400px; max-height:400px;')
                 .modal-footer
-                  a.btn.btn-primary(href=imgDownloadUrl)= 'Download'
-                  button.btn.btn-secondary(type='button', data-dismiss='modal')= 'Close'
+                  a.btn.btn-primary(href=imgDownloadUrl)= 'ダウンロード'
+                  button.btn.btn-secondary(type='button', data-dismiss='modal')= '閉じる'
                   .pull-left
                     form(action='/img_delete/' + item._id + '/' + imgId, method='post')
-                      button.btn.btn-danger(type='submit')= 'Delete'
+                      button.btn.btn-danger(type='submit')= '削除'
 
       form(action='/img_upload', method='post', enctype='multipart/form-data')
         .form-group
-          label= 'Add Photo'
+          label= '写真追加'
           input(type='hidden', name='_id', value=item._id)
           input.form-control(type='file', name='imgFile', accept='image/*;capture=camera')
-          button.btn.btn-primary(type='submit')= 'Upload'
+          button.btn.btn-primary(type='submit')= '送信'
       form(action='/item_update', method='post')
         .form-group
           label= 'ID'
           input.form-control(type='text', name='_id', value=item._id, readonly)
         .form-group
-          label= 'Summary'
+          label= 'タイトル'
           input.form-control(type='text', name='summary', value=item.summary)
         .form-group
-          label= 'Size'
+          label= 'サイズ'
           input.form-control(type='text', name='size', value=item.size)
         .form-group
-          label= 'Weight'
+          label= '重さ'
           input.form-control(type='text', name='weight', value=item.weight)
         .form-group
-          label= 'Carat'
+          label= 'カラット'
           input.form-control(type='text', name='carat', value=item.carat)
         .form-group
-          label= 'Comment'
+          label= '備考'
           textarea.form-control(name='comment')= item.comment
         .form-group
           label= 'Yahoo ID'
           input.form-control(type='text', name='yahooId', value=item.yahooId)
         .form-group
-          label= 'Buyer Name'
+          label= '落札者氏名'
           input.form-control(type='text', name='buyerName', value=item.buyerName)
         .form-group
-          label= 'Buyer Post Code'
+          label= '落札者郵便番号'
           input.form-control(type='text', name='buyerPostCode', value=item.buyerPostCode)
         .form-group
-          label= 'Buyer Address'
+          label= '落札者アドレス'
           textarea.form-control(name='buyerAddress')= item.buyerAddress
-        button.btn.btn-primary(type='submit')= 'Update'
+        button.btn.btn-primary(type='submit')= '送信'
       .pull-right
         form(action='/item_delete', method='post')
           input(type='hidden', name='_id', value=item._id)
-          button.btn.btn-danger(type='submit')= 'Delete'
+          button.btn.btn-danger(type='submit')= '削除'

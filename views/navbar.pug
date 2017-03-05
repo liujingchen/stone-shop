@@ -1,5 +1,5 @@
 ul.nav.nav-pills
-  each text, step in {1: 'To Photo', 2: 'To Measure', 3: 'To Put Online', 4: 'To Sell', 5: 'To Send'}
+  each text, step in {1: '写真なし', 2: '未測定', 3: '未出品', 4: '落札なし', 5: '落札あり'}
     - let navUrl = '/?step=' + step;
     li(step=step, role='presentation')
       a.step(href=navUrl)= text
