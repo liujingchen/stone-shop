@@ -47,6 +47,9 @@ html
           label= 'カラット'
           input.form-control(type='text', name='carat', value=item.carat)
         .form-group
+          label= '価額'
+          input.form-control(type='text', name='price', value=item.price)
+        .form-group
           label= '備考'
           textarea.form-control(name='comment')= item.comment
         .form-group

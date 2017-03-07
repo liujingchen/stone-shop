@@ -69,11 +69,13 @@ function buildQueryFromStep(step) {
             notExistQuery('size'),
             notExistQuery('weight'),
             notExistQuery('carat'),
+            notExistQuery('price'),
         ]};
         case '3': return {'$and': [
             existQuery('size'),
             existQuery('weight'),
             existQuery('carat'),
+            existQuery('price'),
             existQuery('photo'),
             notExistQuery('yahooId'),
         ]};
@@ -272,7 +274,7 @@ app.post('/img_delete/:itemId/:imgId', mw.auth, function(req, res) {
 let mongoRetry = 10;
 function handleMongoConnected(err, dbResult) {
     if(err != null) {
-        console.error(FAILED_TO_CONNECT + ": " + err);
+        console.error(FAILED_TO_CONNECT + ': ' + err);
         if (mongoRetry > 0) {
             mongoRetry--;
             sleep.sleep(1);

@@ -21,8 +21,11 @@ html
               td= '落札者'
           tbody
             each item in items
-              - let itemUrl = '/item/' + item._id;
-              - let descript = (item.photo? item.photo.length:0) + ", " + item.size + ", " + item.weight + ", " + item.carat;
+              -
+                let itemUrl = '/item/' + item._id;
+                let descript = (item.photo? item.photo.length:0) + ', '
+                                + item.size + ', ' + item.weight + ', '
+                                + item.carat + ', ' + item.price;
               tr
                 td
                   a(href=itemUrl)= item.summary
