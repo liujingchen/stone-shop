@@ -72,10 +72,12 @@ function buildQueryFromStep(step) {
             notExistQuery('price'),
         ]};
         case '3': return {'$and': [
-            existQuery('size'),
-            existQuery('weight'),
-            existQuery('carat'),
-            existQuery('price'),
+            {'$or': [
+                existQuery('size'),
+                existQuery('weight'),
+                existQuery('carat'),
+                existQuery('price'),
+            ]},
             existQuery('photo'),
             notExistQuery('yahooId'),
         ]};
