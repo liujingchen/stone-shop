@@ -15,25 +15,29 @@ html
         table.table.table-striped.table-bordered
           thead
             tr
+              td= '#'
               td= 'タイトル'
               td= '概要'
               td= 'Yahoo'
               td= '落札者'
           tbody
+            - let rowNum = 0;
             each item in items
               -
+                rowNum++;
                 let itemUrl = '/item/' + item._id;
                 let descript = (item.photo? item.photo.length:0) + ', '
                                 + item.size + ', ' + item.weight + ', '
                                 + item.carat + ', ' + item.price;
               tr
+                td= rowNum
                 td
                   a(href=itemUrl)= item.summary
                 td= descript
                 if item.yahooId
                   - let yahooUrl = 'http://auctions.yahoo.co.jp/jp/auction/' + item.yahooId;
                   td
-                    a(href=yahooUrl)= 'link'
+                    a(href=yahooUrl)= item.yahooId
                 else
                   td= ''
                 if item.buyerName
