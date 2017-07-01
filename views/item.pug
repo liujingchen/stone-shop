@@ -38,6 +38,12 @@ html
           label= 'タイトル'
           input.form-control(type='text', name='summary', value=item.summary)
         .form-group
+          label= '価額'
+          input.form-control(type='text', name='price', value=item.price)
+        .form-group
+          label= '備考'
+          textarea.form-control(name='comment')= item.comment
+        .form-group
           label= 'サイズ'
           input.form-control(type='text', name='size', value=item.size)
         .form-group
@@ -46,12 +52,6 @@ html
         .form-group
           label= 'カラット'
           input.form-control(type='text', name='carat', value=item.carat)
-        .form-group
-          label= '価額'
-          input.form-control(type='text', name='price', value=item.price)
-        .form-group
-          label= '備考'
-          textarea.form-control(name='comment')= item.comment
         .form-group
           label= 'Yahoo ID'
           input.form-control(type='text', name='yahooId', value=item.yahooId)
