@@ -26,14 +26,15 @@ html
               -
                 rowNum++;
                 let itemUrl = '/item/' + item._id;
-                let descript = (item.photo? item.photo.length:0) + ', '
-                                + item.size + ', ' + item.weight + ', '
-                                + item.carat + ', ' + item.price;
               tr
                 td= rowNum
-                td
-                  a(href=itemUrl)= item.summary
-                td= descript
+                if item.summary
+                  td
+                    a(href=itemUrl)= item.summary
+                else
+                  td
+                    a(href=itemUrl)= 'None'
+                td= item.comment
                 if item.yahooId
                   - let yahooUrl = 'http://auctions.yahoo.co.jp/jp/auction/' + item.yahooId;
                   td

@@ -66,16 +66,12 @@ function buildQueryFromStep(step) {
     switch(step) {
         case '1': return notExistQuery('photo');
         case '2': return {'$and': [
-            notExistQuery('size'),
-            notExistQuery('weight'),
-            notExistQuery('carat'),
+            notExistQuery('comment'),
             notExistQuery('price'),
         ]};
         case '3': return {'$and': [
             {'$or': [
-                existQuery('size'),
-                existQuery('weight'),
-                existQuery('carat'),
+                existQuery('comment'),
                 existQuery('price'),
             ]},
             existQuery('photo'),
